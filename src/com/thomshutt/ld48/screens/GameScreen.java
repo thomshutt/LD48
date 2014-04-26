@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.thomshutt.ld48.DrawableList;
 import com.thomshutt.ld48.entities.Drawable;
 import com.thomshutt.ld48.entities.Player;
 import com.thomshutt.ld48.util.ThomUnitConverter;
@@ -13,7 +14,7 @@ import com.thomshutt.ld48.util.ThomUnitConverter;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class GameScreen implements ApplicationListener {
+public class GameScreen implements ApplicationListener, DrawableList {
 
     private final GameScreenListener gameScreenListener;
     private OrthographicCamera camera;
@@ -34,7 +35,7 @@ public class GameScreen implements ApplicationListener {
         this.shapeRenderer = new ShapeRenderer();
         Gdx.gl.glClearColor(0, 0, 0, 1);
 
-        this.drawables.add(new Player());
+        this.drawables.add(new Player(this));
     }
 
     @Override
@@ -51,7 +52,16 @@ public class GameScreen implements ApplicationListener {
     private void doUpdate(){
         removeDeadDrawables();
         simulateCollisions();
+        checkForInput();
         tick();
+    }
+
+    private void checkForInput() {
+        if(Gdx.input.justTouched()) {
+            for (Drawable drawable : drawables) {
+                drawable.screenTouched(Gdx.input.getX(), Gdx.input.getY());
+            }
+        }
     }
 
     private void removeDeadDrawables() {
@@ -114,5 +124,10 @@ public class GameScreen implements ApplicationListener {
 
     @Override
     public void resume() {}
+
+    @Override
+    public void addToList(Drawable drawable) {
+        this.drawables.add(drawable);
+    }
 
 }

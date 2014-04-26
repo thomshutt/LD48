@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.thomshutt.ld48.BulletFactory;
+import com.thomshutt.ld48.DrawableList;
 import com.thomshutt.ld48.util.ThomUnitConverter;
 
 import java.util.Random;
@@ -11,8 +13,11 @@ import java.util.Random;
 public class Player implements Drawable {
 
     private static enum WALL_HIT { NONE, TOP, BOTTOM, LEFT, RIGHT }
-
     private static final double TWO_PI = Math.PI * 2;
+
+    private final Random random = new Random(System.currentTimeMillis());
+    private final DrawableList drawableList;
+    private final BulletFactory bulletFactory;
 
     private Rectangle topBgRect;
     private Rectangle bottomBgRect;
@@ -20,17 +25,32 @@ public class Player implements Drawable {
     private double directionRadians;
     private float playerXThoms = 0;
     private float playerYThoms = 0;
-    private float speed = 10f;
+    private float speed = 50f;
+    private int playerWidthThoms = 10;
+    private int playerHeightThoms = 10;
     private ThomUnitConverter thomUnitConverter;
 
-    public Player() {
-        this.directionRadians = new Random(System.currentTimeMillis()).nextFloat() * TWO_PI;
+    public Player(DrawableList drawableList) {
+        this.drawableList = drawableList;
+        this.directionRadians = random.nextFloat() * TWO_PI;
+        this.bulletFactory = new BulletFactory(drawableList);
     }
 
     @Override
     public void tick(float deltaTime) {
-        if(hasHitWall() != WALL_HIT.NONE) {
-
+        switch(hasHitWall()) {
+            case LEFT:
+            case RIGHT:
+                this.directionRadians = Math.PI - this.directionRadians;
+                this.speed += 0.1;
+                break;
+            case TOP:
+            case BOTTOM:
+                this.speed += 0.1;
+                this.directionRadians = -this.directionRadians;
+                break;
+            default:
+                break;
         }
 
         this.playerXThoms -= Math.cos(this.directionRadians) * deltaTime * this.speed;
@@ -38,12 +58,15 @@ public class Player implements Drawable {
     }
 
     private WALL_HIT hasHitWall() {
-        if(this.playerXThoms < thomUnitConverter.getScreenLeftmostThoms()) {
+        if(this.playerXThoms < thomUnitConverter.getScreenLeftmostThoms())
             return WALL_HIT.LEFT;
-        }
-        if(this.playerXThoms > thomUnitConverter.getScreenRightmostThoms()) {
+        if(this.playerXThoms > thomUnitConverter.getScreenRightmostThoms())
             return WALL_HIT.RIGHT;
-        }
+        if(this.playerYThoms < thomUnitConverter.getScreenBottommostThoms())
+            return WALL_HIT.BOTTOM;
+        if(this.playerYThoms > thomUnitConverter.getScreenTopmostThoms())
+            return WALL_HIT.TOP;
+
         return WALL_HIT.NONE;
     }
 
@@ -53,8 +76,10 @@ public class Player implements Drawable {
         shapeRenderer.rect(bottomBgRect.x, bottomBgRect.y, bottomBgRect.width, bottomBgRect.height);
         shapeRenderer.setColor(Color.BLACK);
         shapeRenderer.rect(topBgRect.x, topBgRect.y, topBgRect.width, topBgRect.height);
-        
-        shapeRenderer.setColor(Color.BLUE);
+
+        if(this.playerYThoms > 0) {
+            shapeRenderer.setColor(Color.WHITE);
+        }
         shapeRenderer.rect(
                 thomUnitConverter.thomsToPixels(this.playerXThoms),
                 thomUnitConverter.thomsToPixels(this.playerYThoms),
@@ -96,6 +121,11 @@ public class Player implements Drawable {
     @Override
     public boolean isDead() {
         return false;
+    }
+
+    @Override
+    public void screenTouched(float touchXThoms, float touchYThoms) {
+        this.bulletFactory.createBullet(this.playerXThoms, this.playerYThoms, -this.directionRadians, this.thomUnitConverter);
     }
 
 }

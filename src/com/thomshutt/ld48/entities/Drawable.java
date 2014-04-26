@@ -20,4 +20,6 @@ public interface Drawable {
 
     public boolean isDead();
 
+    public void screenTouched(float touchXThoms, float touchYThoms);
+
 }
