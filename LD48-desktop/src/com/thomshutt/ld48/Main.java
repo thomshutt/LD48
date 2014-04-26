@@ -8,7 +8,7 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "LD48";
 		cfg.width = 480;
-		cfg.height = 320;
+		cfg.height = 400;
 		
 		new LwjglApplication(new LD48(), cfg);
 	}

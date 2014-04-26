@@ -45,11 +45,17 @@ public class ThomUnitConverter {
         return screenHeightThoms;
     }
 
+    public float getScreenWidthPixels(){ return this.screenWidthPixels; }
+    public float getHalfScreenWidthPixels(){ return this.screenWidthPixels / 2; }
+    public float getScreenHeightPixels(){ return this.screenHeightPixels; }
+    public float getHalfScreenHeightPixels(){ return this.screenHeightPixels / 2; }
+
     public int getScreenLeftmostPixel(){ return thomsToPixels(-(this.screenWidthThoms / 2.0f)); }
+    public float getScreenLeftmostThoms(){ return - this.screenWidthThoms / 2; }
     public int getScreenRightmostPixel(){ return thomsToPixels((this.screenWidthThoms / 2.0f)); }
     public float getScreenRightmostThoms(){ return this.screenWidthThoms / 2.0f; }
     public int getScreenTopmostPixel(){ return Math.round(this.screenHeightPixels / 2); }
-    public int getScreenBottommostPixel(){ return getScreenTopmostPixel() - thomsToPixels(this.screenHeightThoms); }
+    public float getScreenBottommostPixel(){ return getScreenTopmostPixel() - this.screenHeightPixels; }
 
     public boolean isOffScreen(float xThoms, float yThoms) {
         return yThoms < getScreenBottommostPixel() || xThoms > getScreenRightmostPixel();

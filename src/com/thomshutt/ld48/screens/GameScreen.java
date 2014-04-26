@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.thomshutt.ld48.entities.Drawable;
+import com.thomshutt.ld48.entities.Player;
 import com.thomshutt.ld48.util.ThomUnitConverter;
 
 import java.util.List;
@@ -32,6 +33,8 @@ public class GameScreen implements ApplicationListener {
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
         Gdx.gl.glClearColor(0, 0, 0, 1);
+
+        this.drawables.add(new Player());
     }
 
     @Override
@@ -68,7 +71,13 @@ public class GameScreen implements ApplicationListener {
 
     private void simulateCollisions() {
         for (Drawable drawable : drawables) {
+            if(drawable.getCollisionRectangle() == null) {
+                continue;
+            }
             for (Drawable drawable1 : drawables) {
+                if(drawable1.getCollisionRectangle() == null) {
+                    continue;
+                }
                 if(drawable.getCollisionRectangle().overlaps(drawable1.getCollisionRectangle())){
                     drawable.collideWith(drawable1);
                 }
@@ -96,7 +105,7 @@ public class GameScreen implements ApplicationListener {
         this.shapeRenderer.setProjectionMatrix(camera.combined);
         this.batch.setProjectionMatrix(camera.combined);
         for (Drawable drawable : drawables) {
-            drawable.screenSizeChanged();
+            drawable.screenSizeChanged(this.thomUnitConverter);
         }
     }
 
