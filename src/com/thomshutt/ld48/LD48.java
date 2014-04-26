@@ -9,58 +9,69 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.thomshutt.ld48.screens.*;
+import com.thomshutt.ld48.util.HighScore;
 
-public class LD48 implements ApplicationListener {
-	private OrthographicCamera camera;
-	private SpriteBatch batch;
-	private Texture texture;
-	private Sprite sprite;
-	
-	@Override
-	public void create() {		
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
-		
-		camera = new OrthographicCamera(1, h/w);
-		batch = new SpriteBatch();
-		
-//		texture = new Texture(Gdx.files.internal("data/libgdx.png"));
-//		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
-		TextureRegion region = new TextureRegion(texture, 0, 0, 512, 275);
-		
-		sprite = new Sprite(region);
-		sprite.setSize(0.9f, 0.9f * sprite.getHeight() / sprite.getWidth());
-		sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
-		sprite.setPosition(-sprite.getWidth()/2, -sprite.getHeight()/2);
-	}
+public class LD48 implements ApplicationListener, TitleScreenListener, GameScreenListener, DeathScreenListener {
 
-	@Override
-	public void dispose() {
-		batch.dispose();
-		texture.dispose();
-	}
+    private ApplicationListener currentScreen = new GameScreen(this);
+    private int screenWidthPixels;
+    private int screenHeightPixels;
 
-	@Override
-	public void render() {		
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		sprite.draw(batch);
-		batch.end();
-	}
+    @Override
+    public void create() {
+        this.currentScreen.create();
+    }
 
-	@Override
-	public void resize(int width, int height) {
-	}
+    @Override
+    public void resize(int screenWidthPixels, int screenHeightPixels) {
+        this.screenWidthPixels = screenWidthPixels;
+        this.screenHeightPixels = screenHeightPixels;
+        this.currentScreen.resize(screenWidthPixels, screenHeightPixels);
+    }
 
-	@Override
-	public void pause() {
-	}
+    @Override
+    public void render() {
+        this.currentScreen.render();
+    }
 
-	@Override
-	public void resume() {
-	}
+    @Override
+    public void pause() {
+        this.currentScreen.pause();
+    }
+
+    @Override
+    public void resume() {
+        this.currentScreen.resume();
+    }
+
+    @Override
+    public void dispose() {
+        this.currentScreen.dispose();
+    }
+
+    @Override
+    public void startButtonPressed() {
+        startNewGame();
+    }
+
+    @Override
+    public void replayButtonPressed() {
+        startNewGame();
+    }
+
+    @Override
+    public void gameFinished(int latestScore) {
+        HighScore.setHighScore(latestScore);
+        this.currentScreen = new DeathScreen(this);
+        this.currentScreen.create();
+        this.currentScreen.resize(this.screenWidthPixels, this.screenHeightPixels);
+    }
+
+    private void startNewGame(){
+        this.currentScreen = new GameScreen(this);
+        this.currentScreen.create();
+        this.currentScreen.resize(this.screenWidthPixels, this.screenHeightPixels);
+    }
+
 }
