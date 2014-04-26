@@ -4,11 +4,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.thomshutt.ld48.util.ThomUnitConverter;
 
 public class Bullet implements Drawable {
 
-    private static final int speed = 10;
+    private static final int speed = 80;
 
     private final double directionRadians;
     private float bulletXThoms;
@@ -29,16 +30,16 @@ public class Bullet implements Drawable {
 
     @Override
     public void draw(ShapeRenderer shapeRenderer) {
-        if(this.bulletYThoms > 0) {
+        if(this.bulletYThoms > thomUnitConverter.getHalfScreenHeightThoms()) {
             shapeRenderer.setColor(Color.WHITE);
         } else {
             shapeRenderer.setColor(Color.BLACK);
         }
-        shapeRenderer.rect(
-                thomUnitConverter.thomsToPixels(this.bulletXThoms),
-                thomUnitConverter.thomsToPixels(this.bulletYThoms),
-                10,
-                10);
+        final Vector2 vector2 = thomUnitConverter.thomToPixel(new Vector2(this.bulletXThoms, this.bulletYThoms));
+        shapeRenderer.circle(
+                vector2.x,
+                vector2.y,
+                3);
     }
 
     @Override

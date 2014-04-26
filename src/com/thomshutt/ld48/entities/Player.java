@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.thomshutt.ld48.BulletFactory;
 import com.thomshutt.ld48.DrawableList;
 import com.thomshutt.ld48.util.ThomUnitConverter;
@@ -16,7 +17,6 @@ public class Player implements Drawable {
     private static final double TWO_PI = Math.PI * 2;
 
     private final Random random = new Random(System.currentTimeMillis());
-    private final DrawableList drawableList;
     private final BulletFactory bulletFactory;
 
     private Rectangle topBgRect;
@@ -31,7 +31,6 @@ public class Player implements Drawable {
     private ThomUnitConverter thomUnitConverter;
 
     public Player(DrawableList drawableList) {
-        this.drawableList = drawableList;
         this.directionRadians = random.nextFloat() * TWO_PI;
         this.bulletFactory = new BulletFactory(drawableList);
     }
@@ -78,11 +77,12 @@ public class Player implements Drawable {
         shapeRenderer.rect(topBgRect.x, topBgRect.y, topBgRect.width, topBgRect.height);
 
         if(this.playerYThoms > 0) {
-            shapeRenderer.setColor(Color.WHITE);
+            shapeRenderer.setColor(Color.BLUE);
         }
+        final Vector2 vector2 = thomUnitConverter.thomToPixel(new Vector2(this.playerXThoms, this.playerYThoms));
         shapeRenderer.rect(
-                thomUnitConverter.thomsToPixels(this.playerXThoms),
-                thomUnitConverter.thomsToPixels(this.playerYThoms),
+                vector2.x,
+                vector2.y,
                 10,
                 10);
     }
@@ -95,13 +95,13 @@ public class Player implements Drawable {
     public void screenSizeChanged(ThomUnitConverter thomUnitConverter) {
         this.thomUnitConverter = thomUnitConverter;
         bottomBgRect = new Rectangle(
-                thomUnitConverter.getScreenLeftmostPixel(),
+                thomUnitConverter.thomToPixel(new Vector2(0, 0)).x,
                 thomUnitConverter.getScreenBottommostPixel(),
                 thomUnitConverter.getScreenWidthPixels(),
                 thomUnitConverter.getHalfScreenHeightPixels()
         );
         topBgRect = new Rectangle(
-                thomUnitConverter.getScreenLeftmostPixel(),
+                thomUnitConverter.thomToPixel(new Vector2(0, 0)).x,
                 0,
                 thomUnitConverter.getScreenWidthPixels(),
                 thomUnitConverter.getHalfScreenHeightPixels()
@@ -124,8 +124,11 @@ public class Player implements Drawable {
     }
 
     @Override
-    public void screenTouched(float touchXThoms, float touchYThoms) {
-        this.bulletFactory.createBullet(this.playerXThoms, this.playerYThoms, -this.directionRadians, this.thomUnitConverter);
+    public void screenTouched(float touchXPixels, float touchYPixels) {
+        final Vector2 vector2 = thomUnitConverter.touchToThoms();
+        float radians = (float) (Math.atan2(playerYThoms - vector2.y, playerXThoms - vector2.x));
+        double degrees = (Math.toDegrees(radians) + 360) % 360;
+        this.bulletFactory.createBullet(this.playerXThoms, this.playerYThoms, Math.toRadians(degrees), this.thomUnitConverter);
     }
 
 }
