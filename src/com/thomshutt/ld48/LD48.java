@@ -12,11 +12,16 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.thomshutt.ld48.screens.*;
 import com.thomshutt.ld48.util.HighScore;
 
+import java.util.Random;
+
 public class LD48 implements ApplicationListener, TitleScreenListener, GameScreenListener, DeathScreenListener {
 
     private ApplicationListener currentScreen = new GameScreen(this);
     private int screenWidthPixels;
     private int screenHeightPixels;
+
+    public static final Random RANDOM = new Random(System.currentTimeMillis());
+    public static final double TWO_PI = Math.PI * 2;
 
     @Override
     public void create() {

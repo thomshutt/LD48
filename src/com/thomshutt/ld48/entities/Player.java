@@ -7,16 +7,15 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.thomshutt.ld48.BulletFactory;
 import com.thomshutt.ld48.DrawableList;
+import com.thomshutt.ld48.LD48;
 import com.thomshutt.ld48.util.ThomUnitConverter;
 
 import java.util.Random;
 
 public class Player implements Drawable {
 
-    private static enum WALL_HIT { NONE, TOP, BOTTOM, LEFT, RIGHT }
-    private static final double TWO_PI = Math.PI * 2;
+    public static enum WALL_HIT {NONE, TOP, BOTTOM, LEFT, RIGHT}
 
-    private final Random random = new Random(System.currentTimeMillis());
     private final BulletFactory bulletFactory;
 
     private Rectangle topBgRect;
@@ -31,13 +30,13 @@ public class Player implements Drawable {
     private ThomUnitConverter thomUnitConverter;
 
     public Player(DrawableList drawableList) {
-        this.directionRadians = random.nextFloat() * TWO_PI;
+        this.directionRadians = LD48.RANDOM.nextFloat() * LD48.TWO_PI;
         this.bulletFactory = new BulletFactory(drawableList);
     }
 
     @Override
     public void tick(float deltaTime) {
-        switch(hasHitWall()) {
+        switch (hasHitWall()) {
             case LEFT:
             case RIGHT:
                 this.directionRadians = Math.PI - this.directionRadians;
@@ -57,13 +56,13 @@ public class Player implements Drawable {
     }
 
     private WALL_HIT hasHitWall() {
-        if(this.playerXThoms < thomUnitConverter.getScreenLeftmostThoms())
+        if (this.playerXThoms < thomUnitConverter.getScreenLeftmostThoms())
             return WALL_HIT.LEFT;
-        if(this.playerXThoms > thomUnitConverter.getScreenRightmostThoms())
+        if (this.playerXThoms > thomUnitConverter.getScreenRightmostThoms())
             return WALL_HIT.RIGHT;
-        if(this.playerYThoms < thomUnitConverter.getScreenBottommostThoms())
+        if (this.playerYThoms < thomUnitConverter.getScreenBottommostThoms())
             return WALL_HIT.BOTTOM;
-        if(this.playerYThoms > thomUnitConverter.getScreenTopmostThoms())
+        if (this.playerYThoms > thomUnitConverter.getScreenTopmostThoms())
             return WALL_HIT.TOP;
 
         return WALL_HIT.NONE;
@@ -76,15 +75,15 @@ public class Player implements Drawable {
         shapeRenderer.setColor(Color.BLACK);
         shapeRenderer.rect(topBgRect.x, topBgRect.y, topBgRect.width, topBgRect.height);
 
-        if(this.playerYThoms > 0) {
-            shapeRenderer.setColor(Color.BLUE);
+        if (this.playerYThoms > thomUnitConverter.getHalfScreenHeightThoms()) {
+            shapeRenderer.setColor(Color.WHITE);
         }
         final Vector2 vector2 = thomUnitConverter.thomToPixel(new Vector2(this.playerXThoms, this.playerYThoms));
         shapeRenderer.rect(
                 vector2.x,
                 vector2.y,
-                10,
-                10);
+                this.playerWidthThoms,
+                this.playerHeightThoms);
     }
 
     @Override

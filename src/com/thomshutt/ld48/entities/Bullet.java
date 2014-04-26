@@ -15,6 +15,7 @@ public class Bullet implements Drawable {
     private float bulletXThoms;
     private float bulletYThoms;
     private ThomUnitConverter thomUnitConverter;
+    private boolean isDead = false;
 
     public Bullet(float startXThoms, float startYThoms, double directionRadians) {
         this.bulletXThoms = startXThoms;
@@ -54,17 +55,17 @@ public class Bullet implements Drawable {
 
     @Override
     public Rectangle getCollisionRectangle() {
-        return null;
+        return new Rectangle(this.bulletXThoms, this.bulletYThoms, 2, 2);
     }
 
     @Override
     public void collideWith(Drawable drawable) {
-
+        this.isDead = true;
     }
 
     @Override
     public boolean isDead() {
-        return this.thomUnitConverter.isOffScreen(this.bulletXThoms, this.bulletYThoms);
+        return this.isDead || this.thomUnitConverter.isOffScreen(new Vector2(this.bulletXThoms, this.bulletYThoms));
     }
 
     @Override

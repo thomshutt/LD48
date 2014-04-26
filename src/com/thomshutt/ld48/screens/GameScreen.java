@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.thomshutt.ld48.DrawableList;
+import com.thomshutt.ld48.EnemyFactory;
 import com.thomshutt.ld48.entities.Drawable;
 import com.thomshutt.ld48.entities.Player;
 import com.thomshutt.ld48.util.ThomUnitConverter;
@@ -24,6 +25,7 @@ public class GameScreen implements ApplicationListener, DrawableList {
 
     private ThomUnitConverter thomUnitConverter;
     private ShapeRenderer shapeRenderer;
+    private EnemyFactory enemyFactory;
 
     public GameScreen(GameScreenListener gameScreenListener) {
         this.gameScreenListener = gameScreenListener;
@@ -53,6 +55,7 @@ public class GameScreen implements ApplicationListener, DrawableList {
         removeDeadDrawables();
         simulateCollisions();
         checkForInput();
+        this.enemyFactory.createEnemy();
         tick();
     }
 
@@ -85,7 +88,7 @@ public class GameScreen implements ApplicationListener, DrawableList {
                 continue;
             }
             for (Drawable drawable1 : drawables) {
-                if(drawable1.getCollisionRectangle() == null) {
+                if(drawable1.getCollisionRectangle() == null || drawable1 == drawable) {
                     continue;
                 }
                 if(drawable.getCollisionRectangle().overlaps(drawable1.getCollisionRectangle())){
@@ -111,6 +114,7 @@ public class GameScreen implements ApplicationListener, DrawableList {
     @Override
     public void resize(int width, int height) {
         this.thomUnitConverter = new ThomUnitConverter(width, height);
+        this.enemyFactory = new EnemyFactory(this, thomUnitConverter);
         this.camera = new OrthographicCamera(width, height);
         this.shapeRenderer.setProjectionMatrix(camera.combined);
         this.batch.setProjectionMatrix(camera.combined);

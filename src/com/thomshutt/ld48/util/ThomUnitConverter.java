@@ -112,9 +112,8 @@ public class ThomUnitConverter {
         return 0;
     }
 
-    public boolean isOffScreen(float xThoms, float yThoms) {
-        // TODO
-        return false;
+    public boolean isOffScreen(Vector2 thoms) {
+        return thoms.x < -30 || thoms.y < -30 || thoms.y > this.screenHeightThoms+30 || thoms.x > this.screenWidthThoms+30;
     }
 
 }
