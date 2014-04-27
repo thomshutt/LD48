@@ -22,6 +22,10 @@ public class LD48 implements ApplicationListener, TitleScreenListener, GameScree
     public static BitmapFont FONT_WHITE;
     public static Texture TEXTURE_ABOVE;
     public static Texture TEXTURE_BELOW;
+    public static Texture TEXTURE_ENEMY_WHITE;
+    public static Texture TEXTURE_ENEMY_BLACK;
+    public static Texture TEXTURE_PLAYER_ABOVE;
+    public static Texture TEXTURE_PLAYER_BELOW;
     public static Sprite SPRITE_ABOVE;
     public static Sprite SPRITE_BELOW;
 
@@ -30,6 +34,10 @@ public class LD48 implements ApplicationListener, TitleScreenListener, GameScree
         FONT_WHITE = new BitmapFont(Gdx.files.internal("data/font_white.fnt"), Gdx.files.internal("data/font_white.png"), false);
         TEXTURE_ABOVE = new Texture(Gdx.files.internal("data/above.png"));
         TEXTURE_BELOW = new Texture(Gdx.files.internal("data/below.png"));
+        TEXTURE_ENEMY_WHITE = new Texture(Gdx.files.internal("data/enemy_white.png"));
+        TEXTURE_ENEMY_BLACK = new Texture(Gdx.files.internal("data/enemy_black.png"));
+        TEXTURE_PLAYER_ABOVE = new Texture(Gdx.files.internal("data/player_above.png"));
+        TEXTURE_PLAYER_BELOW = new Texture(Gdx.files.internal("data/player_below.png"));
         SPRITE_ABOVE = new Sprite(LD48.TEXTURE_ABOVE);
         SPRITE_BELOW = new Sprite(LD48.TEXTURE_BELOW);
         SPRITE_ABOVE.setAlpha(0.8f);

@@ -66,18 +66,16 @@ public class Enemy implements Drawable {
 
     @Override
     public void draw(ShapeRenderer shapeRenderer) {
-        final Vector2 vector2 = thomUnitConverter.positionalThomToPixel(new Vector2(this.enemyXThoms, this.enemyYThoms));
-        shapeRenderer.setColor(Color.CYAN);
-        shapeRenderer.rect(
-                vector2.x,
-                vector2.y,
-                this.enemySizePixels.x,
-                this.enemySizePixels.y);
     }
 
     @Override
     public void draw(SpriteBatch spriteBatch) {
-
+        final Vector2 vector2 = thomUnitConverter.positionalThomToPixel(new Vector2(this.enemyXThoms, this.enemyYThoms));
+        if (this.enemyYThoms > thomUnitConverter.getHalfScreenHeightThoms()) {
+            spriteBatch.draw(LD48.TEXTURE_ENEMY_BLACK, vector2.x, vector2.y, this.enemySizePixels.x, this.enemySizePixels.y);
+        } else {
+           spriteBatch.draw(LD48.TEXTURE_ENEMY_WHITE, vector2.x, vector2.y, this.enemySizePixels.x, this.enemySizePixels.y);
+        }
     }
 
     @Override

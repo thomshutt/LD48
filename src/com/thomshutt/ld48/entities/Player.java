@@ -1,7 +1,5 @@
 package com.thomshutt.ld48.entities;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -14,12 +12,9 @@ import com.thomshutt.ld48.util.ThomUnitConverter;
 public class Player implements Drawable {
 
     public static enum WALL_HIT {NONE, TOP, BOTTOM, LEFT, RIGHT;}
-    private static final Vector2 PLAYER_SIZE_THOMS = new Vector2(2, 2);
+    private static final Vector2 PLAYER_SIZE_THOMS = new Vector2(5, 5);
 
     private final BulletFactory bulletFactory;
-
-    private Rectangle topBgRect;
-    private Rectangle bottomBgRect;
 
     private double directionRadians;
     private float playerXThoms = 37;
@@ -72,21 +67,19 @@ public class Player implements Drawable {
 
     @Override
     public void draw(ShapeRenderer shapeRenderer) {
-        if (this.playerYThoms > thomUnitConverter.getHalfScreenHeightThoms()) {
-            shapeRenderer.setColor(Color.BLACK);
-        }
-        final Vector2 positionPixels = thomUnitConverter.positionalThomToPixel(new Vector2(this.playerXThoms, this.playerYThoms));
-        shapeRenderer.rect(
-                positionPixels.x,
-                positionPixels.y,
-                playerSizePixels.x,
-                playerSizePixels.y);
     }
 
     @Override
     public void draw(SpriteBatch spriteBatch) {
         LD48.SPRITE_ABOVE.draw(spriteBatch);
         LD48.SPRITE_BELOW.draw(spriteBatch);
+
+        final Vector2 positionPixels = thomUnitConverter.positionalThomToPixel(new Vector2(this.playerXThoms, this.playerYThoms));
+        if (this.playerYThoms > thomUnitConverter.getHalfScreenHeightThoms()) {
+            spriteBatch.draw(LD48.TEXTURE_PLAYER_ABOVE, positionPixels.x, positionPixels.y, playerSizePixels.x, playerSizePixels.y);
+        } else {
+            spriteBatch.draw(LD48.TEXTURE_PLAYER_BELOW, positionPixels.x, positionPixels.y, playerSizePixels.x, playerSizePixels.y);
+        }
     }
 
     @Override
@@ -123,6 +116,9 @@ public class Player implements Drawable {
         final Vector2 vector2 = thomUnitConverter.touchToThoms();
         float radians = (float) (Math.atan2(playerYThoms - vector2.y, playerXThoms - vector2.x));
         double degrees = (Math.toDegrees(radians) + 360) % 360;
+        if (this.playerYThoms < thomUnitConverter.getHalfScreenHeightThoms()) {
+            degrees += 180;
+        }
         this.bulletFactory.createBullet(this.playerXThoms, this.playerYThoms, Math.toRadians(degrees), this.thomUnitConverter);
     }
 
