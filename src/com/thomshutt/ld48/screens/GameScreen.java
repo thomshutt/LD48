@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.thomshutt.ld48.DrawableList;
 import com.thomshutt.ld48.EnemyFactory;
 import com.thomshutt.ld48.entities.Drawable;
+import com.thomshutt.ld48.entities.Enemy;
 import com.thomshutt.ld48.entities.Player;
 import com.thomshutt.ld48.util.ThomUnitConverter;
 
@@ -26,6 +27,8 @@ public class GameScreen implements ApplicationListener, DrawableList {
     private ThomUnitConverter thomUnitConverter;
     private ShapeRenderer shapeRenderer;
     private EnemyFactory enemyFactory;
+    private Player player;
+    private int score = 0;
 
     public GameScreen(GameScreenListener gameScreenListener) {
         this.gameScreenListener = gameScreenListener;
@@ -37,7 +40,8 @@ public class GameScreen implements ApplicationListener, DrawableList {
         this.shapeRenderer = new ShapeRenderer();
         Gdx.gl.glClearColor(0, 0, 0, 1);
 
-        this.drawables.add(new Player(this));
+        this.player = new Player(this);
+        this.drawables.add(player);
     }
 
     @Override
@@ -52,11 +56,14 @@ public class GameScreen implements ApplicationListener, DrawableList {
     }
 
     private void doUpdate(){
-        removeDeadDrawables();
         simulateCollisions();
+        removeDeadDrawables();
         checkForInput();
-        this.enemyFactory.createEnemy();
         tick();
+        this.enemyFactory.createEnemy();
+        if(this.player.isDead()) {
+            this.gameScreenListener.gameFinished(this.score);
+        }
     }
 
     private void checkForInput() {
@@ -71,6 +78,9 @@ public class GameScreen implements ApplicationListener, DrawableList {
         for (Drawable drawable : drawables) {
             if(drawable.isDead()){
                 drawables.remove(drawable);
+                if(drawable instanceof Enemy) {
+                    this.score++;
+                }
             }
         }
     }

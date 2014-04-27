@@ -9,9 +9,7 @@ import com.badlogic.gdx.math.Vector2;
  * |   *
  * |   *
  * |   *
- * <p/>
  * 100 *
- * <p/>
  * |   *
  * |   *
  * |   *
@@ -40,10 +38,17 @@ public class ThomUnitConverter {
         System.out.println(thomUnitConverter.pixelToThom(new Vector2(-75, -100)));
     }
 
-    public Vector2 thomToPixel(Vector2 thoms) {
+    public Vector2 positionalThomToPixel(Vector2 thoms) {
         return new Vector2(
                 (thoms.x * ratioX) - getHalfScreenWidthPixels(),
                 (thoms.y * ratioY) - getHalfScreenHeightPixels()
+        );
+    }
+
+    public Vector2 sizeThomToPixel(Vector2 thoms) {
+        return new Vector2(
+                (thoms.x * ratioX),
+                (thoms.y * ratioX)
         );
     }
 

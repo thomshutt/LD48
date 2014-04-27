@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,15 +17,17 @@ import java.util.Random;
 
 public class LD48 implements ApplicationListener, TitleScreenListener, GameScreenListener, DeathScreenListener {
 
-    private ApplicationListener currentScreen = new GameScreen(this);
+    private ApplicationListener currentScreen = new TitleScreen(this);
     private int screenWidthPixels;
     private int screenHeightPixels;
 
     public static final Random RANDOM = new Random(System.currentTimeMillis());
     public static final double TWO_PI = Math.PI * 2;
+    public static BitmapFont FONT_WHITE;
 
     @Override
     public void create() {
+        FONT_WHITE = new BitmapFont(Gdx.files.internal("data/font_white.fnt"), Gdx.files.internal("data/font_white.png"), false);
         this.currentScreen.create();
     }
 

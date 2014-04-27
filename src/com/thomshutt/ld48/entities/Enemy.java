@@ -13,12 +13,15 @@ import static com.thomshutt.ld48.entities.Player.WALL_HIT.*;
 
 public class Enemy implements Drawable {
 
+    private static final Vector2 ENEMY_SIZE_THOMS = new Vector2(5, 5);
+
     private ThomUnitConverter thomUnitConverter;
     private double directionRadians;
     private double speed = 10;
     private float enemyXThoms;
     private float enemyYThoms;
     private boolean isDead = false;
+    private Vector2 enemySizePixels;
 
     public Enemy(ThomUnitConverter thomUnitConverter, float startXThoms, float startYThoms) {
         this.screenSizeChanged(thomUnitConverter);
@@ -63,13 +66,13 @@ public class Enemy implements Drawable {
 
     @Override
     public void draw(ShapeRenderer shapeRenderer) {
-        final Vector2 vector2 = thomUnitConverter.thomToPixel(new Vector2(this.enemyXThoms, this.enemyYThoms));
+        final Vector2 vector2 = thomUnitConverter.positionalThomToPixel(new Vector2(this.enemyXThoms, this.enemyYThoms));
         shapeRenderer.setColor(Color.CYAN);
         shapeRenderer.rect(
                 vector2.x,
                 vector2.y,
-                20,
-                20);
+                this.enemySizePixels.x,
+                this.enemySizePixels.y);
     }
 
     @Override
@@ -80,16 +83,17 @@ public class Enemy implements Drawable {
     @Override
     public void screenSizeChanged(ThomUnitConverter thomUnitConverter) {
         this.thomUnitConverter = thomUnitConverter;
+        this.enemySizePixels = thomUnitConverter.sizeThomToPixel(ENEMY_SIZE_THOMS);
     }
 
     @Override
     public Rectangle getCollisionRectangle() {
-        final Vector2 vector2 = thomUnitConverter.thomToPixel(new Vector2(this.enemyXThoms, this.enemyYThoms));
+        final Vector2 vector2 = thomUnitConverter.positionalThomToPixel(new Vector2(this.enemyXThoms, this.enemyYThoms));
         return new Rectangle(
                 vector2.x,
                 vector2.y,
-                20,
-                20
+                this.enemySizePixels.x,
+                this.enemySizePixels.y
         );
     }
 

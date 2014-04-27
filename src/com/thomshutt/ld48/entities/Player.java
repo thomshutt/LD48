@@ -10,11 +10,10 @@ import com.thomshutt.ld48.DrawableList;
 import com.thomshutt.ld48.LD48;
 import com.thomshutt.ld48.util.ThomUnitConverter;
 
-import java.util.Random;
-
 public class Player implements Drawable {
 
-    public static enum WALL_HIT {NONE, TOP, BOTTOM, LEFT, RIGHT}
+    public static enum WALL_HIT {NONE, TOP, BOTTOM, LEFT, RIGHT;}
+    private static final Vector2 PLAYER_SIZE_THOMS = new Vector2(2, 2);
 
     private final BulletFactory bulletFactory;
 
@@ -22,11 +21,11 @@ public class Player implements Drawable {
     private Rectangle bottomBgRect;
 
     private double directionRadians;
-    private float playerXThoms = 0;
-    private float playerYThoms = 0;
+    private float playerXThoms = 37;
+    private float playerYThoms = 50;
     private float speed = 50f;
-    private int playerWidthThoms = 10;
-    private int playerHeightThoms = 10;
+    private Vector2 playerSizePixels;
+
     private ThomUnitConverter thomUnitConverter;
 
     public Player(DrawableList drawableList) {
@@ -70,20 +69,20 @@ public class Player implements Drawable {
 
     @Override
     public void draw(ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rect(bottomBgRect.x, bottomBgRect.y, bottomBgRect.width, bottomBgRect.height);
         shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.rect(bottomBgRect.x, bottomBgRect.y, bottomBgRect.width, bottomBgRect.height);
+        shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(topBgRect.x, topBgRect.y, topBgRect.width, topBgRect.height);
 
         if (this.playerYThoms > thomUnitConverter.getHalfScreenHeightThoms()) {
-            shapeRenderer.setColor(Color.WHITE);
+            shapeRenderer.setColor(Color.BLACK);
         }
-        final Vector2 vector2 = thomUnitConverter.thomToPixel(new Vector2(this.playerXThoms, this.playerYThoms));
+        final Vector2 positionPixels = thomUnitConverter.positionalThomToPixel(new Vector2(this.playerXThoms, this.playerYThoms));
         shapeRenderer.rect(
-                vector2.x,
-                vector2.y,
-                this.playerWidthThoms,
-                this.playerHeightThoms);
+                positionPixels.x,
+                positionPixels.y,
+                playerSizePixels.x,
+                playerSizePixels.y);
     }
 
     @Override
@@ -94,22 +93,29 @@ public class Player implements Drawable {
     public void screenSizeChanged(ThomUnitConverter thomUnitConverter) {
         this.thomUnitConverter = thomUnitConverter;
         bottomBgRect = new Rectangle(
-                thomUnitConverter.thomToPixel(new Vector2(0, 0)).x,
+                thomUnitConverter.positionalThomToPixel(new Vector2(0, 0)).x,
                 thomUnitConverter.getScreenBottommostPixel(),
                 thomUnitConverter.getScreenWidthPixels(),
                 thomUnitConverter.getHalfScreenHeightPixels()
         );
         topBgRect = new Rectangle(
-                thomUnitConverter.thomToPixel(new Vector2(0, 0)).x,
+                thomUnitConverter.positionalThomToPixel(new Vector2(0, 0)).x,
                 0,
                 thomUnitConverter.getScreenWidthPixels(),
                 thomUnitConverter.getHalfScreenHeightPixels()
         );
+        playerSizePixels = thomUnitConverter.sizeThomToPixel(PLAYER_SIZE_THOMS);
     }
 
     @Override
     public Rectangle getCollisionRectangle() {
-        return null;
+        final Vector2 vector2 = thomUnitConverter.positionalThomToPixel(new Vector2(this.playerXThoms, this.playerYThoms));
+        return new Rectangle(
+                vector2.x,
+                vector2.y,
+                this.playerSizePixels.x,
+                this.playerSizePixels.y
+        );
     }
 
     @Override

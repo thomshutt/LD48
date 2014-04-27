@@ -10,12 +10,14 @@ import com.thomshutt.ld48.util.ThomUnitConverter;
 public class Bullet implements Drawable {
 
     private static final int SPEED = 80;
+    private static final Vector2 BULLET_SIZE_THOMS = new Vector2(1, 1);
 
     private final double directionRadians;
     private float bulletXThoms;
     private float bulletYThoms;
     private ThomUnitConverter thomUnitConverter;
     private boolean isDead = false;
+    private float bulletSizePixels;
 
     public Bullet(float startXThoms, float startYThoms, double directionRadians) {
         this.bulletXThoms = startXThoms;
@@ -32,15 +34,15 @@ public class Bullet implements Drawable {
     @Override
     public void draw(ShapeRenderer shapeRenderer) {
         if (this.bulletYThoms > thomUnitConverter.getHalfScreenHeightThoms()) {
-            shapeRenderer.setColor(Color.WHITE);
-        } else {
             shapeRenderer.setColor(Color.BLACK);
+        } else {
+            shapeRenderer.setColor(Color.WHITE);
         }
-        final Vector2 vector2 = thomUnitConverter.thomToPixel(new Vector2(this.bulletXThoms, this.bulletYThoms));
+        final Vector2 vector2 = thomUnitConverter.positionalThomToPixel(new Vector2(this.bulletXThoms, this.bulletYThoms));
         shapeRenderer.circle(
                 vector2.x,
                 vector2.y,
-                3);
+                this.bulletSizePixels);
     }
 
     @Override
@@ -51,22 +53,25 @@ public class Bullet implements Drawable {
     @Override
     public void screenSizeChanged(ThomUnitConverter thomUnitConverter) {
         this.thomUnitConverter = thomUnitConverter;
+        this.bulletSizePixels = thomUnitConverter.sizeThomToPixel(BULLET_SIZE_THOMS).x;
     }
 
     @Override
     public Rectangle getCollisionRectangle() {
-        final Vector2 vector2 = thomUnitConverter.thomToPixel(new Vector2(this.bulletXThoms, this.bulletYThoms));
+        final Vector2 vector2 = thomUnitConverter.positionalThomToPixel(new Vector2(this.bulletXThoms, this.bulletYThoms));
         return new Rectangle(
                 vector2.x,
                 vector2.y,
-                2,
-                2
+                this.bulletSizePixels,
+                this.bulletSizePixels
         );
     }
 
     @Override
     public void collideWith(Drawable drawable) {
-        this.isDead = true;
+        if(drawable instanceof Enemy) {
+           this.isDead = true;
+        }
     }
 
     @Override
