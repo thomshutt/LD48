@@ -5,6 +5,7 @@ out/
 *.jar
 *.war
 *.ear
+*.apk
 
 # Eclipse
 .classpath
