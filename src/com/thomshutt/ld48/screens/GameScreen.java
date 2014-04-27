@@ -2,10 +2,13 @@ package com.thomshutt.ld48.screens;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.thomshutt.ld48.DrawableList;
 import com.thomshutt.ld48.EnemyFactory;
 import com.thomshutt.ld48.entities.Drawable;
@@ -29,6 +32,8 @@ public class GameScreen implements ApplicationListener, DrawableList {
     private EnemyFactory enemyFactory;
     private Player player;
     private int score = 0;
+    private Rectangle bottomBgRect;
+    private Rectangle topBgRect;
 
     public GameScreen(GameScreenListener gameScreenListener) {
         this.gameScreenListener = gameScreenListener;
@@ -112,13 +117,24 @@ public class GameScreen implements ApplicationListener, DrawableList {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.rect(bottomBgRect.x, bottomBgRect.y, bottomBgRect.width, bottomBgRect.height);
+        shapeRenderer.setColor(Color.WHITE);
+        shapeRenderer.rect(topBgRect.x, topBgRect.y, topBgRect.width, topBgRect.height);
+        shapeRenderer.end();
+
+        batch.begin();
+        for (Drawable drawable : drawables) {
+            drawable.draw(batch);
+        }
+        batch.end();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (Drawable drawable : drawables) {
             drawable.draw(shapeRenderer);
         }
         shapeRenderer.end();
 
-        batch.begin();
-        batch.end();
     }
 
     @Override
@@ -131,6 +147,18 @@ public class GameScreen implements ApplicationListener, DrawableList {
         for (Drawable drawable : drawables) {
             drawable.screenSizeChanged(this.thomUnitConverter);
         }
+        bottomBgRect = new Rectangle(
+                thomUnitConverter.positionalThomToPixel(new Vector2(0, 0)).x,
+                thomUnitConverter.getScreenBottommostPixel(),
+                thomUnitConverter.getScreenWidthPixels(),
+                thomUnitConverter.getHalfScreenHeightPixels()
+        );
+        topBgRect = new Rectangle(
+                thomUnitConverter.positionalThomToPixel(new Vector2(0, 0)).x,
+                0,
+                thomUnitConverter.getScreenWidthPixels(),
+                thomUnitConverter.getHalfScreenHeightPixels()
+        );
     }
 
     @Override

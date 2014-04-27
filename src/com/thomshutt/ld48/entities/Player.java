@@ -1,6 +1,7 @@
 package com.thomshutt.ld48.entities;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -71,11 +72,6 @@ public class Player implements Drawable {
 
     @Override
     public void draw(ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(Color.BLACK);
-        shapeRenderer.rect(bottomBgRect.x, bottomBgRect.y, bottomBgRect.width, bottomBgRect.height);
-        shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rect(topBgRect.x, topBgRect.y, topBgRect.width, topBgRect.height);
-
         if (this.playerYThoms > thomUnitConverter.getHalfScreenHeightThoms()) {
             shapeRenderer.setColor(Color.BLACK);
         }
@@ -89,23 +85,13 @@ public class Player implements Drawable {
 
     @Override
     public void draw(SpriteBatch spriteBatch) {
+        LD48.SPRITE_ABOVE.draw(spriteBatch);
+        LD48.SPRITE_BELOW.draw(spriteBatch);
     }
 
     @Override
     public void screenSizeChanged(ThomUnitConverter thomUnitConverter) {
         this.thomUnitConverter = thomUnitConverter;
-        bottomBgRect = new Rectangle(
-                thomUnitConverter.positionalThomToPixel(new Vector2(0, 0)).x,
-                thomUnitConverter.getScreenBottommostPixel(),
-                thomUnitConverter.getScreenWidthPixels(),
-                thomUnitConverter.getHalfScreenHeightPixels()
-        );
-        topBgRect = new Rectangle(
-                thomUnitConverter.positionalThomToPixel(new Vector2(0, 0)).x,
-                0,
-                thomUnitConverter.getScreenWidthPixels(),
-                thomUnitConverter.getHalfScreenHeightPixels()
-        );
         playerSizePixels = thomUnitConverter.sizeThomToPixel(PLAYER_SIZE_THOMS);
     }
 

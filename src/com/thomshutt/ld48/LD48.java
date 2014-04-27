@@ -3,14 +3,9 @@ package com.thomshutt.ld48;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.thomshutt.ld48.screens.*;
 import com.thomshutt.ld48.util.HighScore;
 
@@ -25,10 +20,20 @@ public class LD48 implements ApplicationListener, TitleScreenListener, GameScree
     public static final Random RANDOM = new Random(System.currentTimeMillis());
     public static final double TWO_PI = Math.PI * 2;
     public static BitmapFont FONT_WHITE;
+    public static Texture TEXTURE_ABOVE;
+    public static Texture TEXTURE_BELOW;
+    public static Sprite SPRITE_ABOVE;
+    public static Sprite SPRITE_BELOW;
 
     @Override
     public void create() {
         FONT_WHITE = new BitmapFont(Gdx.files.internal("data/font_white.fnt"), Gdx.files.internal("data/font_white.png"), false);
+        TEXTURE_ABOVE = new Texture(Gdx.files.internal("data/above.png"));
+        TEXTURE_BELOW = new Texture(Gdx.files.internal("data/below.png"));
+        SPRITE_ABOVE = new Sprite(LD48.TEXTURE_ABOVE);
+        SPRITE_BELOW = new Sprite(LD48.TEXTURE_BELOW);
+        SPRITE_ABOVE.setAlpha(0.8f);
+        SPRITE_BELOW.setAlpha(0.8f);
         this.currentScreen.create();
     }
 
@@ -37,6 +42,14 @@ public class LD48 implements ApplicationListener, TitleScreenListener, GameScree
         this.screenWidthPixels = screenWidthPixels;
         this.screenHeightPixels = screenHeightPixels;
         this.currentScreen.resize(screenWidthPixels, screenHeightPixels);
+
+        SPRITE_ABOVE.setSize(screenWidthPixels, (screenWidthPixels / 3) * 2);
+        SPRITE_ABOVE.setX(-(screenWidthPixels / 2));
+        SPRITE_ABOVE.setY(0);
+
+        SPRITE_BELOW.setSize(screenWidthPixels, screenHeightPixels / 2);
+        SPRITE_BELOW.setX(-(screenWidthPixels / 2));
+        SPRITE_BELOW.setY(-(screenHeightPixels / 2));
     }
 
     @Override
