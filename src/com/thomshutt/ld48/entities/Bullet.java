@@ -9,7 +9,7 @@ import com.thomshutt.ld48.util.ThomUnitConverter;
 
 public class Bullet implements Drawable {
 
-    private static final int speed = 80;
+    private static final int SPEED = 80;
 
     private final double directionRadians;
     private float bulletXThoms;
@@ -25,13 +25,13 @@ public class Bullet implements Drawable {
 
     @Override
     public void tick(float deltaTime) {
-        this.bulletXThoms -= Math.cos(this.directionRadians) * deltaTime * this.speed;
-        this.bulletYThoms -= Math.sin(this.directionRadians) * deltaTime * this.speed;
+        this.bulletXThoms -= Math.cos(this.directionRadians) * deltaTime * SPEED;
+        this.bulletYThoms -= Math.sin(this.directionRadians) * deltaTime * SPEED;
     }
 
     @Override
     public void draw(ShapeRenderer shapeRenderer) {
-        if(this.bulletYThoms > thomUnitConverter.getHalfScreenHeightThoms()) {
+        if (this.bulletYThoms > thomUnitConverter.getHalfScreenHeightThoms()) {
             shapeRenderer.setColor(Color.WHITE);
         } else {
             shapeRenderer.setColor(Color.BLACK);
@@ -55,7 +55,13 @@ public class Bullet implements Drawable {
 
     @Override
     public Rectangle getCollisionRectangle() {
-        return new Rectangle(this.bulletXThoms, this.bulletYThoms, 2, 2);
+        final Vector2 vector2 = thomUnitConverter.thomToPixel(new Vector2(this.bulletXThoms, this.bulletYThoms));
+        return new Rectangle(
+                vector2.x,
+                vector2.y,
+                2,
+                2
+        );
     }
 
     @Override

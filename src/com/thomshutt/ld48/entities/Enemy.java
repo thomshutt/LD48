@@ -84,7 +84,13 @@ public class Enemy implements Drawable {
 
     @Override
     public Rectangle getCollisionRectangle() {
-        return new Rectangle(this.enemyXThoms, this.enemyYThoms, 20, 20);
+        final Vector2 vector2 = thomUnitConverter.thomToPixel(new Vector2(this.enemyXThoms, this.enemyYThoms));
+        return new Rectangle(
+                vector2.x,
+                vector2.y,
+                20,
+                20
+        );
     }
 
     @Override
