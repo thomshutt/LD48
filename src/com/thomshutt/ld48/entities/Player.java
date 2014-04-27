@@ -25,6 +25,8 @@ public class Player implements Drawable {
     private float playerYThoms = 50;
     private float speed = 50f;
     private Vector2 playerSizePixels;
+    private boolean isDead = false;
+
 
     private ThomUnitConverter thomUnitConverter;
 
@@ -120,12 +122,14 @@ public class Player implements Drawable {
 
     @Override
     public void collideWith(Drawable drawable) {
-
+        if(drawable instanceof Enemy){
+            this.isDead = true;
+        }
     }
 
     @Override
     public boolean isDead() {
-        return false;
+        return this.isDead;
     }
 
     @Override

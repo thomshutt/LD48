@@ -2,6 +2,7 @@ package com.thomshutt.ld48;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -70,8 +71,9 @@ public class LD48 implements ApplicationListener, TitleScreenListener, GameScree
 
     @Override
     public void gameFinished(int latestScore) {
+        final int previousHighScore = HighScore.getHighScore();
         HighScore.setHighScore(latestScore);
-        this.currentScreen = new DeathScreen(this);
+        this.currentScreen = new DeathScreen(this, previousHighScore, latestScore);
         this.currentScreen.create();
         this.currentScreen.resize(this.screenWidthPixels, this.screenHeightPixels);
     }
@@ -80,6 +82,13 @@ public class LD48 implements ApplicationListener, TitleScreenListener, GameScree
         this.currentScreen = new GameScreen(this);
         this.currentScreen.create();
         this.currentScreen.resize(this.screenWidthPixels, this.screenHeightPixels);
+    }
+
+    public static boolean isInputTouched(){
+        return Gdx.input.justTouched()
+                || Gdx.input.isKeyPressed(Input.Keys.SPACE)
+                || Gdx.input.isKeyPressed(Input.Keys.ENTER)
+                || Gdx.input.isKeyPressed(Input.Keys.DOWN);
     }
 
 }

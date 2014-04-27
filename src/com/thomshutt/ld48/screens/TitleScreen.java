@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.thomshutt.ld48.LD48;
 import com.thomshutt.ld48.util.ThomUnitConverter;
 
 import static com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
@@ -50,16 +51,9 @@ public class TitleScreen implements ApplicationListener {
             drawStartButton();
         batch.end();
 
-        if(isInputTouched()){
+        if(LD48.isInputTouched()){
             this.titleScreenListener.startButtonPressed();
         }
-    }
-
-    private static boolean isInputTouched(){
-        return Gdx.input.justTouched()
-                || Gdx.input.isKeyPressed(Input.Keys.SPACE)
-                || Gdx.input.isKeyPressed(Input.Keys.ENTER)
-                || Gdx.input.isKeyPressed(Input.Keys.DOWN);
     }
 
     private void drawIntroText() {
